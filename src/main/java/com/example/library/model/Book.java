@@ -29,13 +29,13 @@ public class Book {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	
-	private long id;
+	private int id;
 	
 	@Column(name = "name")
 	private String name;
 	
 	@Column(name = "page")
-	private String page;
+	private long page;
 	
 	@Column(name = "author")
 	private String author;
@@ -51,7 +51,11 @@ public class Book {
 
 	@Column(name = "description")
 	private String description;
-	public Book(String name,String page,String author,String photo,String code,String year,String description) {
+	
+	@Column(name = "count")
+	private long count;
+	
+	public Book(String name,Long page,String author,String photo,String code,String year,String description,Long count) {
 		this.name=name;
 		this.page=page;
 		this.author=author;
@@ -59,6 +63,8 @@ public class Book {
 		this.code=code;
 		this.year=year;
 		this.description=description;
+		this.count=count;
+	
 	}
 }
 
