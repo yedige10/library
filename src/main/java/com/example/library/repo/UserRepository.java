@@ -6,6 +6,6 @@ import com.example.library.model.User;
 
 
 
-public interface UserRepository extends  JpaRepository<User, Long>{
+public interface UserRepository extends  JpaRepository<User, Long>,LoginRepository{
 
 }
