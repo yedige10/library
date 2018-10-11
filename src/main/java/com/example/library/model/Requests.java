@@ -60,6 +60,15 @@ public class Requests {
 	@Column(name = "startdate")
 	private Date startdate;
 	
+	public Requests(Long id,Book book,Long count,Date startdate,String status,User user) {
+		this.id=id;
+		this.book=book;
+		this.count=count;
+		this.startdate=startdate;
+		this.status=status;
+		this.user=user;
+	}
+	
 	public Requests(Long id,Long bookId,Long count,Date startdate,String status,Long userId) {
 		this.id=id;
 		this.bookId=bookId;
