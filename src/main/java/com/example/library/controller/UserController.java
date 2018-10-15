@@ -1,6 +1,10 @@
 package com.example.library.controller;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -77,11 +81,13 @@ public class UserController {
 	public Requests createRequest(@RequestBody Requests request) {
 		Book book = bookRepo.findById(request.getBookId()).get();
 		User user = userRepo.findById(request.getUserId()).get();
+		
 		Requests _request = requestRepo.save(new Requests(request.getId(), book, request.getCount(),
 				request.getStartdate(), request.getStatus(), user));
 		book.setCount(book.getCount() - request.getCount());
+		
 		bookRepo.save(book);
-		System.out.println(request.getBookId() + " " + request.getUserId());
+		
 		return _request;
 	}
 
@@ -121,8 +127,13 @@ public class UserController {
 	@PutMapping("/returnedequest/{id}")
 	public Requests returnedRequest(@PathVariable("id") long id, @RequestBody Requests request) {
 		Optional<Requests> _request = requestRepo.findById(id);
+		Book book = bookRepo.findById(request.getBookId()).get();
+		
 		Requests r = _request.get();
 		r.setStatus(request.getStatus());
+		book.setCount(book.getCount() + request.getCount());
+		bookRepo.save(book);
+		
 		requestRepo.save(r);
 		return r;
 	}
@@ -133,5 +144,12 @@ public class UserController {
 		List<Requests> requests = requestRepo.findReturned();
 
 		return requests;
+	}
+	@GetMapping("/data")
+	public String getDate() {
+	SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");  
+    Date date = new Date();  
+	return formatter.format(date);
+	
 	}
 }

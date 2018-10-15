@@ -1,6 +1,5 @@
 
 package com.example.library.model;
-import java.sql.Date;
 
 import javax.persistence.ForeignKey;
 import javax.persistence.CascadeType;
@@ -25,6 +24,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
 @Entity
 @Table(name = "requests")
 @Getter
@@ -33,6 +36,9 @@ import lombok.Setter;
 @NoArgsConstructor
 
 public class Requests {
+	
+	
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -58,22 +64,29 @@ public class Requests {
 	private String status;
 	
 	@Column(name = "startdate")
-	private Date startdate;
+	private String startdate;
 	
-	public Requests(Long id,Book book,Long count,Date startdate,String status,User user) {
+	public Requests(Long id,Book book,Long count,String startdate,String status,User user) {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");  
+	    Date date = new Date();  
+		
 		this.id=id;
 		this.book=book;
 		this.count=count;
-		this.startdate=startdate;
+		this.startdate=formatter.format(date);
 		this.status=status;
 		this.user=user;
 	}
 	
-	public Requests(Long id,Long bookId,Long count,Date startdate,String status,Long userId) {
+	
+	public Requests(Long id,Long bookId,Long count,String startdate,String status,Long userId) {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");  
+	    Date date = new Date();  
+		
 		this.id=id;
 		this.bookId=bookId;
 		this.count=count;
-		this.startdate=startdate;
+		this.startdate=formatter.format(date);
 		this.status=status;
 		this.userId=userId;
 	}
