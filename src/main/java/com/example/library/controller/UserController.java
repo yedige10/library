@@ -1,10 +1,11 @@
 package com.example.library.controller;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,15 +16,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.library.model.User;
-import com.example.library.model.Requests;
+
 import com.example.library.model.Book;
+import com.example.library.model.Requests;
+import com.example.library.model.User;
 import com.example.library.repo.BookRepository;
-import com.example.library.repo.ClientRepository;
 import com.example.library.repo.RequestsRepository;
 import com.example.library.repo.UserRepository;
-import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -32,16 +31,13 @@ public class UserController {
 	@Autowired
 	UserRepository userRepo;
 	@Autowired
-	ClientRepository clientRepo;
-	@Autowired
 	BookRepository bookRepo;
 	@Autowired
 	RequestsRepository requestRepo;
 
 	@PostMapping("/users/createuser")
 	public User postUserStaff(@RequestBody User user) {
-		User _user = userRepo.save(new User(user.getUsername(), user.getFirstname(), user.getLastname(),
-				user.getEmail(), user.getPassword(), user.getStafforclient()));
+		User _user = userRepo.save(user);
 		return _user;
 	}
 
@@ -63,8 +59,7 @@ public class UserController {
 
 	@PostMapping("/createbook")
 	public Book createBook(@RequestBody Book book) {
-		Book _book = bookRepo.save(new Book(book.getName(), book.getPage(), book.getAuthor(), book.getCode(),
-				book.getYear(), book.getDescription(), book.getCount()));
+		Book _book = bookRepo.save(book);
 		return _book;
 	}
 
@@ -72,7 +67,7 @@ public class UserController {
 	public User loginUser(@RequestBody User user) {
 		System.out.println(user.getUsername() + user.getPassword() + user.getId());
 
-		User _user = userRepo.login(new User(user.getUsername(), user.getPassword()));
+		User _user = userRepo.login(user);
 
 		return _user;
 	}
@@ -81,13 +76,15 @@ public class UserController {
 	public Requests createRequest(@RequestBody Requests request) {
 		Book book = bookRepo.findById(request.getBookId()).get();
 		User user = userRepo.findById(request.getUserId()).get();
-		
-		Requests _request = requestRepo.save(new Requests(request.getId(), book, request.getCount(),
-				request.getStartdate(), request.getStatus(), user));
+
+		request.setBook(book);
+		request.setUser(user);
+		request.setStartDate(LocalDateTime.now());
+		Requests _request = requestRepo.save(request);
 		book.setCount(book.getCount() - request.getCount());
-		
+
 		bookRepo.save(book);
-		
+
 		return _request;
 	}
 
@@ -128,12 +125,13 @@ public class UserController {
 	public Requests returnedRequest(@PathVariable("id") long id, @RequestBody Requests request) {
 		Optional<Requests> _request = requestRepo.findById(id);
 		Book book = bookRepo.findById(request.getBookId()).get();
-		
+
 		Requests r = _request.get();
+		r.setReturnDate(LocalDateTime.now());
 		r.setStatus(request.getStatus());
 		book.setCount(book.getCount() + request.getCount());
 		bookRepo.save(book);
-		
+
 		requestRepo.save(r);
 		return r;
 	}
@@ -145,11 +143,12 @@ public class UserController {
 
 		return requests;
 	}
+
 	@GetMapping("/data")
 	public String getDate() {
-	SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");  
-    Date date = new Date();  
-	return formatter.format(date);
-	
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		Date date = new Date();
+		return formatter.format(date);
+
 	}
 }
